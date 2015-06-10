@@ -30,6 +30,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 @WebServlet("/products")
 public class ProductServlets extends HttpServlet {
+    private Object JSONValue;
     
      @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -144,29 +145,26 @@ public class ProductServlets extends HttpServlet {
 
             }
 
-            jsonString = JSONValue.toJSONString(l1);
+          
         } catch (SQLException ex) {
             System.err.println("SQL Exception Error: " + ex.getMessage());
         }
         return jsonString.replace("},", "},\n");
     }
-
-    private void doUpdate(String insert_into_product_ProductIDnamedescript, String ProductID, String name, String description, String quantity) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    private boolean resultMethod(String query) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    private boolean resultMethod(String select__from_product_WHERE_ProductID_, String valueOf) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    private void doUpdate(String update_product_set_ProductID___name___des, String ProductID, String name, String description, String quantity, String ProductID0) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+  private int doUpdate(String query, String... params) {
+        int numChanges = 0;
+        try (Connection conn = Credentials.getConnection()) {
+            PreparedStatement pstmt = conn.prepareStatement(query);
+            for (int i = 1; i <= params.length; i++) {
+                pstmt.setString(i, params[i - 1]);
+            }
+            numChanges = pstmt.executeUpdate();
+        } catch (SQLException ex) {
+            System.err.println("SQL EXception in doUpdate Method" + ex.getMessage());
+        }
+        return numChanges;
     }
 
 
+   
 }
-
