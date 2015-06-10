@@ -5,8 +5,12 @@
  */
 package Servlet;
 
+import static DatabaseConnection.Credentials.getConnection;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.Set;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -82,6 +86,28 @@ public class ProductServlets extends HttpServlet {
         } catch (IOException ex) {
             response.setStatus(500);
             System.out.println("Error in writing output: " + ex.getMessage());
+        }
+    }
+     @Override
+    protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        Set<String> keySet = request.getParameterMap().keySet();
+        try (PrintWriter out = response.getWriter()) {
+            Connection conn = getConnection();
+            if (keySet.contains("ProductID")) {
+                PreparedStatement pstmt = conn.prepareStatement("DELETE FROM `product` WHERE `ProductID`=" + request.getParameter("ProductID"));
+                try {
+                    pstmt.executeUpdate();
+                } catch (SQLException ex) {
+                    System.err.println("SQL Exception Error in Update prepared Statement: " + ex.getMessage());
+                    out.println("Error in deleting entry.");
+                   
+                }
+            } else {
+                out.println("Error: Not enough data in table to delete");
+                
+            }
+        } catch (SQLException ex) {
+            System.err.println("SQL Exception Error: " + ex.getMessage());
         }
     }
 
