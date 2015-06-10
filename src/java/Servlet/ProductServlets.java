@@ -42,8 +42,8 @@ public class ProductServlets extends HttpServlet {
             if (!request.getParameterNames().hasMoreElements()) {
                 output.println(resultMethod(query));
             } else {
-                int id = Integer.parseInt(request.getParameter("ProductID"));
-                output.println(resultMethod("SELECT * FROM product WHERE ProductID= ?", String.valueOf(id)));
+                int id = Integer.parseInt(request.getParameter("product_id"));
+                output.println(resultMethod("SELECT * FROM product WHERE product_id= ?", String.valueOf(id)));
             }
 
         } catch (IOException ex) {
@@ -58,13 +58,13 @@ public class ProductServlets extends HttpServlet {
 
         try {
             PrintWriter output = response.getWriter();
-            if (keyValues.contains("ProductID") && keyValues.contains("name") && keyValues.contains("description")
+            if (keyValues.contains("product_id") && keyValues.contains("name") && keyValues.contains("description")
                     && keyValues.contains("quantity")) {
-                String ProductID = request.getParameter("ProductID");
+                String product_id = request.getParameter("product_id");
                 String name = request.getParameter("name");
                 String description = request.getParameter("description");
                 String quantity = request.getParameter("quantity");
-                doUpdate("INSERT INTO product (ProductID,name,description,quantity) VALUES (?, ?, ?, ?)", ProductID, name, description, quantity);
+                doUpdate("INSERT INTO product (product_id,name,description,quantity) VALUES (?, ?, ?, ?)", product_id, name, description, quantity);
 
             } else {
                 response.setStatus(500);
@@ -81,12 +81,12 @@ public class ProductServlets extends HttpServlet {
 
         Set<String> keySet = request.getParameterMap().keySet();
         try (PrintWriter out = response.getWriter()) {
-            if (keySet.contains("ProductID") && keySet.contains("name") && keySet.contains("description") && keySet.contains("quantity")) {
-                String ProductID = request.getParameter("ProductID");
+            if (keySet.contains("product_id") && keySet.contains("name") && keySet.contains("description") && keySet.contains("quantity")) {
+                String product_id = request.getParameter("product_id");
                 String name = request.getParameter("name");
                 String description = request.getParameter("description");
                 String quantity = request.getParameter("quantity");
-                doUpdate("update product set ProductID = ?, name = ?, description = ?, quantity = ? where ProductID = ?", ProductID, name, description, quantity, ProductID);
+                doUpdate("update product set product_id = ?, name = ?, description = ?, quantity = ? where product_id = ?", product_id, name, description, quantity, product_id);
             } else {
                 out.println("Error: Not data found for this input. Please use a URL of the form /products?id=xx&name=XXX&description=XXX&quantity=xx");
             }
@@ -100,8 +100,8 @@ public class ProductServlets extends HttpServlet {
         Set<String> keySet = request.getParameterMap().keySet();
         try (PrintWriter out = response.getWriter()) {
             Connection conn = getConnection();
-            if (keySet.contains("ProductID")) {
-                PreparedStatement pstmt = conn.prepareStatement("DELETE FROM `product` WHERE `ProductID`=" + request.getParameter("ProductID"));
+            if (keySet.contains("product_id")) {
+                PreparedStatement pstmt = conn.prepareStatement("DELETE FROM `product` WHERE `product_id`=" + request.getParameter("product_id"));
                 try {
                     pstmt.executeUpdate();
                 } catch (SQLException ex) {
@@ -134,10 +134,9 @@ public class ProductServlets extends HttpServlet {
             ResultSet rs = pstmt.executeQuery();
             List l1 = new LinkedList();
             while (rs.next()) {
-                //Refernce Example 5-2 - Combination of JSON primitives, Map and List
-                //https://code.google.com/p/json-simple/wiki/EncodingExamples
+               
                 Map m1 = new LinkedHashMap();
-                m1.put("ProductID", rs.getInt("ProductID"));
+                m1.put("product_id", rs.getInt("product_id"));
                 m1.put("name", rs.getString("name"));
                 m1.put("description", rs.getString("description"));
                 m1.put("quantity", rs.getInt("quantity"));
@@ -145,7 +144,7 @@ public class ProductServlets extends HttpServlet {
 
             }
 
-          
+            
         } catch (SQLException ex) {
             System.err.println("SQL Exception Error: " + ex.getMessage());
         }
