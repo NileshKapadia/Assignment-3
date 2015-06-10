@@ -5,12 +5,18 @@
  */
 package Servlet;
 
+import DatabaseConnection.Credentials;
 import static DatabaseConnection.Credentials.getConnection;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -109,6 +115,40 @@ public class ProductServlets extends HttpServlet {
         } catch (SQLException ex) {
             System.err.println("SQL Exception Error: " + ex.getMessage());
         }
+    }
+    
+     @Override
+    public String getServletInfo() {
+        return "Short description";
+    }
+    
+     private String resultMethod(String query, String... params) {
+        StringBuilder sb = new StringBuilder();
+        String jsonString = "";
+        try (Connection conn = Credentials.getConnection()) {
+            PreparedStatement pstmt = conn.prepareStatement(query);
+            for (int i = 1; i <= params.length; i++) {
+                pstmt.setString(i, params[i - 1]);
+            }
+            ResultSet rs = pstmt.executeQuery();
+            List l1 = new LinkedList();
+            while (rs.next()) {
+                //Refernce Example 5-2 - Combination of JSON primitives, Map and List
+                //https://code.google.com/p/json-simple/wiki/EncodingExamples
+                Map m1 = new LinkedHashMap();
+                m1.put("ProductID", rs.getInt("ProductID"));
+                m1.put("name", rs.getString("name"));
+                m1.put("description", rs.getString("description"));
+                m1.put("quantity", rs.getInt("quantity"));
+                l1.add(m1);
+
+            }
+
+            jsonString = JSONValue.toJSONString(l1);
+        } catch (SQLException ex) {
+            System.err.println("SQL Exception Error: " + ex.getMessage());
+        }
+        return jsonString.replace("},", "},\n");
     }
 
     private void doUpdate(String insert_into_product_ProductIDnamedescript, String ProductID, String name, String description, String quantity) {
