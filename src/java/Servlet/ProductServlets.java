@@ -65,8 +65,39 @@ public class ProductServlets extends HttpServlet {
         }
 
     }
+     @Override
+    protected void doPut(HttpServletRequest request, HttpServletResponse response) {
+
+        Set<String> keySet = request.getParameterMap().keySet();
+        try (PrintWriter out = response.getWriter()) {
+            if (keySet.contains("ProductID") && keySet.contains("name") && keySet.contains("description") && keySet.contains("quantity")) {
+                String ProductID = request.getParameter("ProductID");
+                String name = request.getParameter("name");
+                String description = request.getParameter("description");
+                String quantity = request.getParameter("quantity");
+                doUpdate("update product set ProductID = ?, name = ?, description = ?, quantity = ? where ProductID = ?", ProductID, name, description, quantity, ProductID);
+            } else {
+                out.println("Error: Not data found for this input. Please use a URL of the form /products?id=xx&name=XXX&description=XXX&quantity=xx");
+            }
+        } catch (IOException ex) {
+            response.setStatus(500);
+            System.out.println("Error in writing output: " + ex.getMessage());
+        }
+    }
 
     private void doUpdate(String insert_into_product_ProductIDnamedescript, String ProductID, String name, String description, String quantity) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    private boolean resultMethod(String query) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    private boolean resultMethod(String select__from_product_WHERE_ProductID_, String valueOf) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    private void doUpdate(String update_product_set_ProductID___name___des, String ProductID, String name, String description, String quantity, String ProductID0) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
